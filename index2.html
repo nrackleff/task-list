@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Task list</title>
+	<link rel="stylesheet" type="text/css" href="css/styles.css" media="screen" />
+</head>
+<body>
+	<header>
+		<span>Task list</span>
+	</header>
+	<main id="taskPage">
+		<section id="taskCreation" class="not">
+			<form id="taskForm">
+				<div>
+					<label for="task">Task</label> <input type="text" required="required" maxlength="200" name="task" id="task" class="large" placeholder="Breakfast at Tiffanys" />
+				</div>
+				<div>
+					<label for="requiredBy">Required by</label> <input type="date" required="required" name="requiredBy" id="requiredBy" />
+				</div>
+				<div>
+					<label for="category">Category</label> <select name="category" id="category">
+						<option value="Personal">Personal</option>
+						<option value="Work">Work</option>
+					</select>
+				</div>
+				<nav>
+					<a href="#" id="saveTask">Save task</a> <a href="#" id="clearTask">Clear task</a>
+				</nav>
+			</form>
+		</section>
+		<section>
+			<table id="tblTasks">
+				<colgroup>
+					<col width="40%">
+					<col width="15%">
+					<col width="15%">
+					<col width="30%">
+				</colgroup>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Due</th>
+						<th>Category</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+			<nav>
+				<a href="#" id="btnAddTask">Add task</a>
+			</nav>
+		</section>
+	</main>
+	<footer>You have <span id="taskCount"></span> tasks</footer>
+	<script src="scripts/jquery-2.1.1.js"></script>
+	<script src="scripts/jquery.tmpl.js"></script>
+	<script src="scripts/jquery-serialization.js"></script>
+	<script src="scripts/tasks-controller.js"></script>
+	<script src="scripts/jquery.validate.js"></script>
+	<!--script src="scripts/tasks-webstorage.js"></script-->
+	<script src="scripts/tasks-indexeddb.js"></script>
+	<script>
+	function initScreen() {
+		$(document).ready(function() {
+			tasksController.init($('#taskPage'), function() {
+				tasksController.loadTasks();
+			});		
+		});
+	}
+	if (window.indexedDB) { 
+		$.getScript( "scripts/tasks-indexeddb.js" )
+		.done(function( script, textStatus ) {
+			initScreen();
+		})
+		.fail(function( jqxhr, settings, exception ) {
+			console.log( 'Failed to load indexed db script' );
+		});
+	} else if (window.localStorage) {
+		$.getScript( "scripts/tasks-webstorage.js" )
+		.done(function( script, textStatus ) {
+			initScreen();
+		})
+		.fail(function( jqxhr, settings, exception ) {
+			console.log( 'Failed to load web storage script' );
+		});
+	}
+	</script>
+	<script id="taskRow" type="text/x-jQuery-tmpl">
+		<tr>
+			<td>${task}</td>
+			<td><time datetime="${requiredBy}">${requiredBy}</time></td>
+			<td>${category}</td>
+			<td>
+				<a href="#" class="editRow">Edit</a>
+				<a href="#" class="completeRow">Complete</a>
+				<a href="#" class="deleteRow">Delete</a>
+			</td>
+
+	</script>
+</body>
+</html>
